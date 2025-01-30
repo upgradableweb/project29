@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const Teacher = require('../models/teacherSchema.js');
 const Subject = require('../models/subjectSchema.js');
 const Account = require('../models/Account.js');
+const Token = require('../lib/token.js');
 
 const teacherRegister = async (req, res) => {
     const { name, email, password, role, school, teachSubject, teachSclass } = req.body;
@@ -30,11 +31,13 @@ const teacherRegister = async (req, res) => {
 const teacherLogIn = async (req, res) => {
     try {
         const { email, password } = req.body
-        let teacher = await Account.findOne({ email: new RegExp(`^${email}$`), password, role: "teacher" });
-        if (!teacher) {
+        let data = await Account.findOne({ email: new RegExp(`^${email}$`), password, role: "teacher" });
+        if (!data) {
             return res.status(404).json({ message: "User not found" })
         }
-        return res.json(teacher)
+        data.token = await Token.createToken({ role: "teacher", email: data.email, id: data._id.toString() })
+        await data.save()
+        return res.json(data)
     } catch (err) {
         res.status(500).json(err);
     }

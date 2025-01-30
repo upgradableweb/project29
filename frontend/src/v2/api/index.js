@@ -1,15 +1,21 @@
 import FetchIt from "./FetchIt";
 
 
+const token_verify = new FetchIt("/token-verify")
+
+export const Token = {
+    verify: () => token_verify.get()
+}
+
 const teachers_students = new FetchIt('/v2/dashboard/teachers-students')
 const dash_subjects = new FetchIt('/v2/dashboard/subjects')
 const dash_branches = new FetchIt('/v2/dashboard/branches')
 
 
 export const Admin_Dashboard = {
-    getStudentTeacherCount: ()=>teachers_students.post(),
-    getSubjectsCount: ()=> dash_subjects.post(),
-    getBranchesCount: ()=> dash_branches.post()
+    getStudentTeacherCount: () => teachers_students.post(),
+    getSubjectsCount: () => dash_subjects.post(),
+    getBranchesCount: () => dash_branches.post()
 }
 
 

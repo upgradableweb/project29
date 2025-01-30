@@ -1,12 +1,11 @@
-import React from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from 'react-redux';
 import Homepage from './pages/Homepage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import StudentDashboard from './pages/student/StudentDashboard';
 import TeacherDashboard from './pages/teacher/TeacherDashboard';
 import LoginPage from './pages/LoginPage';
-import AdminRegisterPage from './pages/admin/AdminRegisterPage';
 import ChooseUser from './pages/ChooseUser';
 import { ToastContainer } from './components/Toast';
 import { ParellelProccess } from './v2/DemoData';
@@ -14,12 +13,33 @@ import ResultCheck from './pages/ResultCheck';
 import PrintResult from './pages/PrintResult';
 import NotFound from './pages/NotFound';
 import ResetPassword from './pages/ResetPassword';
+import { Token } from './v2/api'
+import { authLogout } from './redux/userRelated/userSlice';
+
 
 const App = () => {
+
   const { currentRole } = useSelector(state => state.user);
 
   const { pathname } = window.location
   const isPublic = pathname.startsWith('/results') || pathname.startsWith("/not-found") || pathname.startsWith("/reset-password")
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+
+    if (currentRole) {
+      Token.verify()
+        .catch((err) => {
+          if (err.logout) {
+            dispatch(authLogout());
+            window.location.reload();
+          }
+        })
+    }
+
+  }, [])
+
 
 
   return (

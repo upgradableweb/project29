@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const Student = require('../models/studentSchema.js');
 const Subject = require('../models/subjectSchema.js');
 const Account = require('../models/Account.js');
+const Token = require('../lib/token.js');
 
 const studentRegister = async (req, res) => {
     try {
@@ -40,6 +41,8 @@ const studentLogIn = async (req, res) => {
         usn = new RegExp(`^${usn}$`, 'i')
         let data = await Account.findOne({ usn, password, role: "student" });
         if (data) {
+            data.token = await Token.createToken({ role: "student", email: data.email, id: data._id.toString() })
+            await data.save()
             return res.json(data)
         } else {
             return res.send({ message: "Student not found" });

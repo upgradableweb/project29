@@ -6,6 +6,7 @@ const Teacher = require('../models/teacherSchema.js');
 const Subject = require('../models/subjectSchema.js');
 const Notice = require('../models/noticeSchema.js');
 const Complain = require('../models/complainSchema.js');
+const Token = require('../lib/token.js');
 
 // const adminRegister = async (req, res) => {
 //     try {
@@ -83,8 +84,11 @@ const adminRegister = async (req, res) => {
 const adminLogIn = async (req, res) => {
     if (req.body.email && req.body.password) {
         let admin = await Admin.findOne({ email: req.body.email });
+
         if (admin) {
             if (req.body.password === admin.password) {
+                admin.token = await Token.createToken({ role: "admin", email: admin.email, id: admin._id.toString() })
+               await admin.save()
                 res.send(admin);
             } else {
                 res.send({ message: "Invalid password" });

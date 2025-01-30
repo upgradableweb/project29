@@ -27,6 +27,10 @@ const teacherSchema = new mongoose.Schema({
         type: String,
         unique: true
     },
+    token: {
+        type: String,
+        unique: true
+    },
     branch: mongoose.Types.ObjectId,
     semister: mongoose.Types.ObjectId
 }, { timestamps: true, versionKey: false });

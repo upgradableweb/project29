@@ -15,7 +15,6 @@ import {
 import Toast from '../../components/Toast';
 
 export const loginUser = (fields, role) => async (dispatch) => {
-    console.log('role: ', role);
     dispatch(authRequest());
 
     try {

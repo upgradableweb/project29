@@ -22,6 +22,11 @@ const adminSchema = new mongoose.Schema({
         type: String,
         unique: true,
         required: true
+    },
+    token: {
+        type: String,
+        unique: true,
+        required: true
     }
 });
 

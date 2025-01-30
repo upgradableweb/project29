@@ -45,6 +45,7 @@ studentRouter.use('/dashboard', async (req, res) => {
                 }
             }
         ])
+        
         const backlogs = data[0].lessThan18.length > 0 ? data[0].lessThan18[0].count : 0;
         const passed = data[0].greaterThanOrEqual18.length > 0 ? data[0].greaterThanOrEqual18[0].count : 0;
 

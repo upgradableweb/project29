@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-
+import Cookies from "js-cookie"
 const currentUser = JSON.parse(localStorage.getItem('user'))
 
 const initialState = {
@@ -35,6 +35,7 @@ const userSlice = createSlice({
             state.status = 'success';
             state.currentUser = action.payload;
             state.currentRole = action.payload.role;
+            Cookies.set("token", action.payload.token)
             localStorage.setItem('token', action.payload._id);
             localStorage.setItem('user', JSON.stringify(action.payload));
             state.response = null;
@@ -56,7 +57,6 @@ const userSlice = createSlice({
             state.error = null;
             state.currentRole = null
         },
-
         doneSuccess: (state, action) => {
             state.userDetails = action.payload;
             state.loading = false;
@@ -68,7 +68,6 @@ const userSlice = createSlice({
             state.error = null;
             state.response = null;
         },
-
         getRequest: (state) => {
             state.loading = true;
         },

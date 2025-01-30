@@ -13,8 +13,7 @@ const teacherRouter = require('./teacher/index')
 const studentApiRouter = require('./student/index')
 const Subject = require('../models/Subject')
 const { Types } = require('mongoose')
-
-
+const bcrypt = require("bcrypt")
 
 const v2Router = express.Router()
 
@@ -25,7 +24,9 @@ v2Router.post("/reset-password", async (req, res) => {
         if (!password || password.length < 4) {
             return res.status(400).json({ message: "password must be 4 char long" })
         }
-        let data = await Account.findByIdAndUpdate(user, { password, resetPass: false })
+        const salt = await bcrypt.genSalt(10);
+        const hashedPass = await bcrypt.hash(password, salt);
+        let data = await Account.findByIdAndUpdate(user, { hashedPass, password, resetPass: false })
         if (!data) {
             throw Error("user not found")
         }
@@ -34,6 +35,7 @@ v2Router.post("/reset-password", async (req, res) => {
         return res.status(500).json({ message: error.message })
     }
 })
+
 
 v2Router.use('/dashboard/teachers-students', async (req, res) => {
     try {
