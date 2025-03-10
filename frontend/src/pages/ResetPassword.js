@@ -1,11 +1,12 @@
 import { Button, Divider, Paper, Stack, TextField, Typography } from '@mui/material'
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import Input from '../components/Input'
-import { Link } from 'react-router-dom'
+import Cookies from 'js-cookie'
 import useForm from '../components/useForm'
 import Toast from '../components/Toast'
 import FetchIt from '../v2/api/FetchIt'
 import userData from './teacher/userData'
+import getQuery from '../components/getQuery'
 
 const schema = [
   {
@@ -22,12 +23,38 @@ const schema = [
   }
 ]
 
+const tokenIt = new FetchIt('/v2/student-api/token')
 
 export default function ResetPassword() {
 
   const { data, isError, setTouchId, inputProps } = useForm(schema)
 
   const rdRef = useRef(null)
+  const { token } = getQuery()
+
+
+  const autoLogin = async () => {
+    try {
+      const res = await tokenIt.post({ body: { token } })
+      localStorage.setItem("user", JSON.stringify(res))
+      localStorage.setItem("token", res._id)
+      Cookies.set("token", res.token)
+      window.location.reload()
+    } catch (error) {
+      alert(error.message)
+      if (error.logout) {
+        window.location.replace('/Studentlogin')
+      }
+    }
+  }
+
+
+
+  useEffect(() => {
+    if (token && !Cookies.get("token")) {
+      autoLogin()
+    }
+  }, [])
 
 
   const onSubmit = async () => {

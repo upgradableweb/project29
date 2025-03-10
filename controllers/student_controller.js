@@ -3,6 +3,7 @@ const Student = require('../models/studentSchema.js');
 const Subject = require('../models/subjectSchema.js');
 const Account = require('../models/Account.js');
 const Token = require('../lib/token.js');
+const EmailModule = require('../email_module/index.js');
 
 const studentRegister = async (req, res) => {
     try {
@@ -35,6 +36,9 @@ const studentRegister = async (req, res) => {
     }
 };
 
+domain = process.env.DOMAIN
+login_url = domain + "/Studentlogin"
+
 const studentLogIn = async (req, res) => {
     try {
         let { usn, password } = req.body
@@ -43,6 +47,9 @@ const studentLogIn = async (req, res) => {
         if (data) {
             data.token = await Token.createToken({ role: "student", email: data.email, id: data._id.toString() })
             await data.save()
+            const emailModule = new EmailModule({ to: data.email, subject: "Account Signup" })
+            const { browser, source } = req.useragent
+            await emailModule.signin_alert({ browser, source, user_name: data.name, login_url })
             return res.json(data)
         } else {
             return res.send({ message: "Student not found" });

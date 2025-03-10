@@ -1,9 +1,15 @@
 import { Button, Stack, Typography } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-export default function NotFound() {
+export default function NotFound({ setNotFound }) {
+
     const navigate = useNavigate()
+
+    // useEffect(() => {
+    //     setNotFound && setNotFound(true);
+    //   }, [setNotFound]);
+
 
     return (
         <div>

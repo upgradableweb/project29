@@ -84,7 +84,7 @@ const AddStudent = () => {
         return da && da.semisters && da.semisters.map(d => <option value={d._id}>{d.name}</option>)
     }
 
-    const onSubmit = async () => {
+    const onSubmit = async (isNew) => {
         if (isError()) {
             setTouchId(2)
             return
@@ -93,7 +93,11 @@ const AddStudent = () => {
         try {
             setLoading(true)
             await Student.putById({ id, payload: data })
-            navigate(-1)
+            if (isNew) {
+                window.location.replace("/Admin/student/new")
+            } else {
+                navigate(-1)
+            }
         } catch (error) {
             Toast.error(error.message)
         } finally {
@@ -129,7 +133,10 @@ const AddStudent = () => {
                     <br />
                     <Stack flexDirection={"row"} justifyContent={"space-between"} >
                         <Button variant='outlined' onClick={() => navigate(-1)}>BACK</Button>
-                        <Button variant='contained' onClick={onSubmit}>SUBMIT</Button>
+                        <Stack direction={"row"} gap={4}>
+                            <Button variant="contained" onClick={() => onSubmit("new")}>Save & Add New</Button>
+                            <Button variant="contained" onClick={() => onSubmit()}>SUBMIT</Button>
+                        </Stack>
                     </Stack>
                 </Stack>
             </Paper>

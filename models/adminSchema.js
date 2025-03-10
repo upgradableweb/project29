@@ -20,6 +20,13 @@ const adminSchema = new mongoose.Schema({
     },
     schoolName: {
         type: String,
+        required: true
+    },
+    university: String,
+    contact: String,
+    rootUser: Boolean,
+    dbName: {
+        type: String,
         unique: true,
         required: true
     },
@@ -27,6 +34,10 @@ const adminSchema = new mongoose.Schema({
         type: String,
         unique: true,
         required: true
+    },
+    access: {
+        type: String,
+        default: "*"
     }
 });
 

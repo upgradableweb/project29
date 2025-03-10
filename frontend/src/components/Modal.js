@@ -6,7 +6,6 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
     bgcolor: 'background.paper',
     boxShadow: 24,
     borderRadius: 1
@@ -15,10 +14,10 @@ const style = {
 
 export default function Modal({ open, onClose, children }) {
     return (
-            <MuiModal open={open} onClose={onClose}>
+            <MuiModal open={open} onClose={onClose && onClose}>
                 <Box sx={style}>
                     <Box display="flex" justifyContent="end" alignItems="center">
-                        <IconButton onClick={onClose}>
+                        <IconButton disabled={!onClose} onClick={onClose}>
                             <Close />
                         </IconButton>
                     </Box>

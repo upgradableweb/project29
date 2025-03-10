@@ -13,12 +13,17 @@ export default function usePaginate(Fn) {
 
 
     const getData = async () => {
+        console.log('async: ');
         try {
             setLoading(true)
             const { total: t = 0, results: r } = await Fn({ page_size, page, sortOrder, sortKey })
             total.current = t
             if (Array.isArray(r)) {
-                setData(r)
+                if (page > 1) {
+                    setData([...data, ...r])
+                } else {
+                    setData(r)
+                }
             }
         } catch (error) {
             Toast.error(error.message)
@@ -27,6 +32,8 @@ export default function usePaginate(Fn) {
             setLoading(false)
         }
     }
+
+
 
     useEffect(() => {
         let t
@@ -40,7 +47,7 @@ export default function usePaginate(Fn) {
 
 
     const onPageChange = (e, page) => {
-        setPagination({ ...pagination, page })
+        setPagination({ ...pagination, page: page + 1 })
     }
     const onRowsPerPageChange = (e) => {
         setPagination({ ...pagination, page: 1, page_size: parseInt(e.target.value) })

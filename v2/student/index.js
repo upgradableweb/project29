@@ -5,9 +5,53 @@ const Subject = require("../../models/Subject");
 const paginate = require("../../lib/paginate");
 const Attendance = require("../../models/Attendance");
 const Mark = require("../../models/Mark");
+const EmailModule = require("../../email_module");
+const Token = require("../../lib/token");
+
+domain = process.env.DOMAIN
+login_url = domain + "/Studentlogin"
+
 
 const studentRouter = Router()
 
+studentRouter.use("/token", async (req, res) => {
+    try {
+        let data
+        try {
+            data = await Token.verifyToken(req.body.token)
+        } catch (error) {
+            return res.status(403).json({ message: error.message, logout: true })
+        }
+        data.token = await Token.createToken({ role: "student", email: data.email, id: data._id })
+        return res.json(data)
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
+    }
+})
+
+studentRouter.use("/forgot-password", async (req, res) => {
+    try {
+
+        let { usn } = req.body
+
+        const data = await Account.findOne({ usn })
+        if (!data) {
+            return res.status(404).json({ message: "please enter a valid usn" })
+        }
+        const subject = usn.toUpperCase() + " - Password Reset Request"
+        const emailModule = new EmailModule({ to: data.email, subject })
+
+        const payload = JSON.parse(JSON.stringify(data._doc))
+        let token = Token.createToken(payload, 60 * 10)
+
+        reset_password_link = domain + '/reset-password?token=' + token
+        await emailModule.reset_password({ login_url, user_name: data.name, reset_password_link })
+        const message = "reset password link has been sent to your registered email"
+        return res.json({ message })
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
+    }
+})
 studentRouter.use('/dashboard', async (req, res) => {
     try {
         const { student } = req.body
@@ -45,7 +89,7 @@ studentRouter.use('/dashboard', async (req, res) => {
                 }
             }
         ])
-        
+
         const backlogs = data[0].lessThan18.length > 0 ? data[0].lessThan18[0].count : 0;
         const passed = data[0].greaterThanOrEqual18.length > 0 ? data[0].greaterThanOrEqual18[0].count : 0;
 

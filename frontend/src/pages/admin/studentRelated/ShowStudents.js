@@ -13,90 +13,15 @@ import {
 } from '@mui/material';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import SpeedDialTemplate from '../../../components/SpeedDialTemplate';
-import { DriveFileMove, Edit, FilterAltOff, More, MoreVert, Visibility } from '@mui/icons-material';
+import { Edit, FilterAltOff, More, MoreVert, Visibility } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import TablePaginated from '../../../components/TablePaginated';
 import usePaginate from '../../../components/usePaginate';
-import { Branch, Student } from '../../../v2/api';
-import DemoData from '../../../v2/DemoData';
-import { useEffect, useState } from 'react';
-import Modal from '../../../components/Modal';
-import ApiSelect from '../../../v2/ApiSelect';
-import useForm from '../../../components/useForm';
+import { Student } from '../../../v2/api';
+import {  useState } from 'react';
 import getQuery from '../../../components/getQuery';
 
 
-const sampleSchema = [
-    {
-        label: "Branch",
-        name: 'branch',
-        error: { required: true }
-    },
-    {
-        name: 'semister',
-        label: "Select semister",
-        error: { required: true }
-    }]
-
-export const SelectMarkDetails = ({ open, onClose }) => {
-    const navigate = useNavigate()
-    const { data, isError, setTouchId, setData, inputProps, values } = useForm(sampleSchema)
-    const { branch } = values
-
-    useEffect(() => {
-        if (!open) {
-            setData({})
-        }
-    }, [open])
-
-    const onSubmit = () => {
-        if (isError()) {
-            setTouchId(true)
-            return
-        }
-        navigate(`/Admin/students/marks?branch=${data.branch}&semister=${data.semister}`)
-    }
-
-    const schema = [
-        {
-            label: "Branch",
-            name: 'branch',
-            dep: open,
-            api: () => Branch.getMany({}),
-            Options: (da) => da.map(d => <option value={d._id}>{d.branch_name}</option>),
-            error: { required: true }
-        },
-        {
-            name: 'semister',
-            label: "Select semister",
-            dep: branch,
-            api: () => Branch.getByIdWithSemisters({ id: branch }),
-            Options: (da) => da && da.semisters && da.semisters.map(d => <option value={d._id}>{d.name}</option>),
-            error: { required: true }
-        },
-    ]
-
-
-
-    return <Modal open={open} onClose={onClose}>
-        <Box sx={{ px: 4, pb: 4 }}>
-            <h3>Select Details</h3>
-            <br />
-            <Stack gap={2}>
-                {schema.map(d => {
-                    return <ApiSelect
-                        dep={d.dep}
-                        api={d.api}
-                        Options={d.Options}
-                        {...inputProps(d)}
-                    />
-                })}
-                <br />
-                <Button onClick={onSubmit} fullWidth variant='contained'>Go To Marks Page</Button>
-            </Stack>
-        </Box>
-    </Modal>
-}
 
 const MoreActions = ({ id }) => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -117,7 +42,6 @@ const MoreActions = ({ id }) => {
                         <Link to={`/Admin/student/${id}/details`}><MenuItem>View</MenuItem></Link>
                         <Link to={`/Admin/student/${id}/marks`}><MenuItem>Marks</MenuItem></Link>
                         <Link to={`/Admin/student/${id}/attendance`}><MenuItem>Attendance</MenuItem></Link>
-                        <Link to={`/Admin/student/${id}/complaints`}><MenuItem>Complaints</MenuItem></Link>
                     </Stack>
                 </Paper>
             </Popper>

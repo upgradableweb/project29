@@ -2,6 +2,7 @@ const { Router } = require("express");
 const Attendance = require("../models/Attendance");
 const paginate = require("../lib/paginate");
 const { Types } = require("mongoose");
+const Account = require("../models/Account")
 
 const attendanceRouter = Router()
 
@@ -11,6 +12,8 @@ attendanceRouter.use('/attendance', async (req, res) => {
         if (method == "POST") {
             let user = new Types.ObjectId(body.user)
             let { stats } = body
+
+            const { semister } = Account.findById(body.user)
 
             let aggregate = []
             if (!stats) {
@@ -23,7 +26,8 @@ attendanceRouter.use('/attendance', async (req, res) => {
                             as: "subject"
                         }
                     },
-                    { $unwind: { path: "$subject", preserveNullAndEmptyArrays: true } },
+                    { $unwind: "$subject" },
+                    { $match: { "subject.semister": semister } },
                     ...paginate(body)
                 ]
             } else {
@@ -60,7 +64,8 @@ attendanceRouter.use('/attendance', async (req, res) => {
                             as: "subject"
                         }
                     },
-                    { $unwind: { path: "$subject", preserveNullAndEmptyArrays: true } },
+                    { $unwind:  "$subject" },
+                    { $match: { "subject.semister": semister } }
                 ]
             }
             data = await Attendance.aggregate([

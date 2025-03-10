@@ -51,7 +51,7 @@ const AdminProfile = () => {
                     <br />
                     <Typography variant='h6'>Email : {email}</Typography>
                     <br />
-                    <Typography variant='h6'>Branch : {schoolName}</Typography>
+                    <Typography variant='h6'>University Name : {schoolName}</Typography>
                 </Paper>
             </Stack>
             <Stack alignItems={"center"}>
@@ -71,7 +71,7 @@ const AdminProfile = () => {
                             autoComplete="name" required />
 
                         <label>University Name</label>
-                        <input className="registerInput" type="text" placeholder="Enter your school name..."
+                        <input className="registerInput" type="text" placeholder="Enter full university name"
                             value={schoolName}
                             onChange={(event) => setSchoolName(event.target.value)}
                             autoComplete="name" required />

@@ -52,6 +52,7 @@ const userSlice = createSlice({
         authLogout: (state) => {
             localStorage.removeItem('user');
             localStorage.removeItem('token');
+            Cookies.remove("token")
             state.currentUser = null;
             state.status = 'idle';
             state.error = null;

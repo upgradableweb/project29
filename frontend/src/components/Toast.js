@@ -46,6 +46,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 const Toast = {
     sucess: (message) => {
+        
         toastInput.value = "sucess," + message
         toastInput.dispatchEvent(new Event('change'));
     },

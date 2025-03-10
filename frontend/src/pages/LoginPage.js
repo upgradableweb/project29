@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Grid, Box, Typography, Paper, Checkbox, FormControlLabel, TextField, CssBaseline, IconButton, InputAdornment, CircularProgress, Backdrop } from '@mui/material';
+import { Button, Grid, Box, Typography, Paper, Checkbox, FormControlLabel, TextField, CssBaseline, IconButton, InputAdornment, CircularProgress, Backdrop, LinearProgress } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import bgpic from "../assets/designlogin.jpg"
@@ -9,6 +9,63 @@ import { LightPurpleButton } from '../components/buttonStyles';
 import styled from 'styled-components';
 import { loginUser } from '../redux/userRelated/userHandle';
 import Popup from '../components/Popup';
+import Modal from '../components/Modal';
+import Input from '../components/Input';
+import Toast from '../components/Toast';
+import Student from '../v2/api/Student';
+
+
+
+const ResetPassword = () => {
+
+    const [open, setOpen] = useState(false)
+    const [usn, setUsn] = useState("")
+    const [message, setMessage] = useState("")
+    const [loading, setLoading] = useState(false)
+
+    const onClose = () => setOpen(false)
+
+
+    const onSubmit = async () => {
+        if (!usn) {
+            setMessage("usn is required")
+            document.getElementsByName("usn").forEach(d => d.focus())
+            return
+        }
+        setMessage("")
+        setLoading(true)
+        try {
+            const body = { usn }
+            const res = await Student.forgotPass({ body })
+            Toast.sucess(res.message)
+            onClose()
+        } catch (error) {
+            setMessage(error.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    return <>
+        <StyledLink onClick={() => setOpen(true)}>
+            Forgot password?
+        </StyledLink>
+        <Modal open={open} onClose={!loading && onClose}>
+            {loading && <Box sx={{ position: "relative", top: -40, }}> <LinearProgress /></Box>}
+            <Box p={2}>
+                <Input value={usn} name="usn" onChange={e => setUsn(e.target.value)} placeholder="1CD22CS002" label={"Enter Student USN"} />
+                <Typography color={"error"}>{message}</Typography>
+                <br />
+                <Box sx={{ display: "flex", justifyContent: "end" }}>
+                    <Button disabled={loading} sx={{ minWidth: 100 }} variant='contained' onClick={onSubmit}>
+                        {loading ? <CircularProgress color='inherit' size={24} /> : "SUBMIT"}
+                    </Button>
+                </Box>
+            </Box>
+        </Modal>
+    </>
+}
+
 
 const defaultTheme = createTheme();
 
@@ -71,9 +128,9 @@ const LoginPage = ({ role }) => {
         if (name === 'studentName') setStudentNameError(false);
     };
 
-    
+
     useEffect(() => {
-       
+
         if (status === 'failed') {
             setMessage(response)
             setShowPopup(true)
@@ -171,9 +228,7 @@ const LoginPage = ({ role }) => {
                                     control={<Checkbox value="remember" color="primary" />}
                                     label="Remember me"
                                 />
-                                {/* <StyledLink to="/forgot-password">
-                                    Forgot password?
-                                </StyledLink> */}
+                                {role == "Student" && <ResetPassword />}
                             </Grid>
                             <LightPurpleButton
                                 type="submit"

@@ -12,7 +12,6 @@ import TableTemplate from '../../../components/TableTemplate';
 import { GreenButton } from '../../../components/buttonStyles';
 import SpeedDialTemplate from '../../../components/SpeedDialTemplate';
 import { DriveFileMove } from '@mui/icons-material';
-import DemoData from '../../../v2/DemoData';
 import { Notice } from '../../../v2/api';
 
 const ShowNotices = () => {
@@ -76,7 +75,7 @@ const ShowNotices = () => {
     ];
 
     return (
-        <>
+        <Box sx={{p:2}}>
             {loading ?
                 <div>Loading...</div>
                 :
@@ -89,7 +88,7 @@ const ShowNotices = () => {
                             </GreenButton>
                         </Box>
                         :
-                        <Paper sx={{ width: '100%', overflow: 'hidden', p: 4, m: 2 }}>
+                        <Paper sx={{ width: '100%', overflow: 'hidden', p: 4 }}>
                             <SpeedDialTemplate actions={actions} />
                             <br />
                             {Array.isArray(noticesList) && noticesList.length > 0 &&
@@ -99,7 +98,7 @@ const ShowNotices = () => {
                     }
                 </>
             }
-        </>
+        </Box>
     );
 };
 

@@ -7,11 +7,11 @@ const subjectRouter = Router()
 
 subjectRouter.use('/subject', async (req, res) => {
     try {
-        const { method, body, params } = req
+        const { method, body, query } = req
         let data
 
         if (method == "GET") {
-            data = await Subject.findOne(params)
+            data = await Subject.findOne(query)
         } else if (method == "PUT") {
             let { id, payload } = body
             if (id == "new") {

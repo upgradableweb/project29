@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import StuTabs from './StuTabs'
 import TablePaginated from '../../../components/TablePaginated'
-import { Box, Button, Checkbox, FormControlLabel, IconButton, Paper, Stack, Typography } from '@mui/material'
+import { Box, Button, Checkbox, FormControlLabel, Grid, IconButton, Paper, Stack, Typography } from '@mui/material'
 import Modal from '../../../components/Modal'
 import Input from '../../../components/Input'
 import { Student, Subject } from '../../../v2/api'
@@ -36,12 +36,13 @@ const total = {
 
 const AddMarksModal = ({ payload, onAction }) => {
 
-  const { data, inputProps, isError, setTouchId, values } = useForm(schema, payload)
+  const { data, inputProps, isError, setTouchId, values, setData } = useForm(schema, payload)
   const totalValue = parseInt(values.internal) + parseInt(values.external)
   const { user_id } = useParams()
   const id = payload?._id
   const onClose = () => {
     onAction()
+    setData({})
   }
 
 
@@ -52,9 +53,10 @@ const AddMarksModal = ({ payload, onAction }) => {
         return
       }
       const { subject, semister } = payload
-      const newPayload = { ...data, user: user_id, semister, subject }
+      const newPayload = { ...values, user: user_id, semister, subject }
       let res = await Student.marks.putById({ payload: newPayload, id })
       onAction(res)
+      setData({})
     } catch (error) {
       alert(error.message)
     }
@@ -77,7 +79,6 @@ const AddMarksModal = ({ payload, onAction }) => {
 
 }
 
-
 const columns = [
   { id: 'subject_code', label: 'Subject Code', minWidth: 70 },
   { id: 'subject_name', label: 'Subject Name', minWidth: 270 },
@@ -87,6 +88,50 @@ const columns = [
   { id: 'result', label: 'Result', },
   { id: 'action', label: 'Action', }
 ]
+
+const AddSubjectModal = ({ onSelect, data }) => {
+
+  const [open, setOpen] = useState(false)
+
+  const onAdd = (val)=>{
+    onSelect(val)
+    setOpen(false)
+  }
+
+  return <>
+    <Stack alignItems={"end"}><Button onClick={() => setOpen(true)}><Add /> Subject</Button></Stack>
+    <Modal open={open} onClose={() => setOpen(false)} >
+      <div style={{ maxWidth: 700, width: "100%" }}>
+        {data.map(d => {
+          return <Paper sx={{ pt: 4 }}>
+            <Typography>{d.semister.name}</Typography>
+            <table style={{ width: "100%" }}>
+              <tbody>
+                <tr>
+                  <th style={{ maxWidth: 300 }}>Subject</th>
+                  <th>Code</th>
+                  <th>Result</th>
+                  <th>Action</th>
+                </tr>
+                {d.marks.map(da => {
+                  return <tr>
+                    <td style={{ maxWidth: 300 }}>{da.subject.subject_name}</td>
+                    <td>{da.subject.subject_code}</td>
+                    <td>{(da.internal < 18 || da.external < 18) ? "F" : "P"}</td>
+                    <td><IconButton onClick={()=> onAdd(da)} size='small'><Add fontSize='small' /></IconButton></td>
+                  </tr>
+                })}
+              </tbody>
+            </table>
+          </Paper>
+        })}
+      </div>
+    </Modal>
+  </>
+}
+
+
+
 
 export default function StudentMarks() {
 
@@ -118,6 +163,9 @@ export default function StudentMarks() {
           pubs.push(d)
         }
       })
+
+      setPublished(pubs)
+
       let marksIt = []
       subjects.map((da, i) => {
         let { subject_name, _id: subject, subject_code } = da
@@ -125,7 +173,6 @@ export default function StudentMarks() {
         marksIt.push({ subject_name, subject_code, subject, external, internal, _id, id: i + 2 })
       })
       setMarks(marksIt)
-      setPublished(pubs)
     } catch (error) {
       alert(error.message)
     }
@@ -146,7 +193,6 @@ export default function StudentMarks() {
   }
 
   const onDelete = () => {
-
     if (!window.confirm("Confirm Delete")) return
     const body = { user: user_id, semester: data.semister._id }
     Student.marks.delete({ body })
@@ -172,16 +218,24 @@ export default function StudentMarks() {
     setPayload(null)
   }
 
+  const onSelect = (newSubject) => {
+    let { subject, external, internal } = newSubject
+    subject.subject = subject._id
+    delete subject._id
+    setMarks([...marks, {...subject, external, internal }])
+  }
+
 
   const { semister } = data
   const rows = marks.map(d => {
     let { internal, external } = d
     internal = parseInt(internal)
     external = parseInt(external)
-
-    let result = (external < 18 || internal < 18) ? "F" : "P"
     let total = internal + external
-    let action = <IconButton onClick={() => setPayload({ ...d, semister })}>{d.internal ? <Edit /> : <Add />}</IconButton>
+
+    let result = total == 0 ? "-" : (external < 18 || internal < 18) ? "F" : "P"
+
+    let action = <IconButton onClick={() => setPayload({ ...d, semister: semister._id })}>{d.internal ? <Edit /> : <Add />}</IconButton>
 
     return { ...d, result, total, action }
   })
@@ -204,14 +258,19 @@ export default function StudentMarks() {
         </Stack>
         <br />
         <TablePaginated columns={columns.slice(0, ready == "done" ? -1 : columns.length)} rows={rows} />
+        <br />
+        {/* <AddSubjectModal data={published} onSelect={onSelect} /> */}
       </Paper>
       {published.map(d => {
         let { marks } = d
         marks = marks.map(d => {
           let subject_name = d.subject.subject_name
           let { internal, external } = d
-          let total = parseInt(internal) + parseInt(external)
-          return { internal, external, subject_name, total }
+          internal = parseInt(internal)
+          external = parseInt(external)
+          let total = internal + external
+          let result = (external < 18 || internal < 18) ? "F" : "P"
+          return { internal, external, subject_name, total, result }
         })
         return <Paper sx={{ p: 4, m: 2 }}>
           <Stack direction={'row'} justifyContent={"space-between"} >

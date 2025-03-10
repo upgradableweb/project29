@@ -80,7 +80,6 @@ const StudentDashboard = () => {
                         <Route path="/Student/attendance" element={<ViewStdAttendance />} />
                         <Route path="/Student/complain" element={<StudentComplain />} />
                         <Route path="/Student/results" element={<StudentResult />} />
-
                         <Route path="/logout" element={<Logout />} />
                     </Routes>
                 </Box>

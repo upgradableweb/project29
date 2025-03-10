@@ -6,6 +6,7 @@ import {
     Checkbox,
     Stack,
     Typography,
+    Switch,
 } from '@mui/material';
 import SpeedDialTemplate from '../../../components/SpeedDialTemplate';
 import { Add, DriveFileMove, Edit, Filter, FilterAlt, FilterAltOff, Visibility } from '@mui/icons-material';
@@ -57,9 +58,9 @@ const ShowSubjects = () => {
         const action = <Box sx={{ display: "flex", gap: 2 }}>
             <Link to={'/Admin/subjects/' + d._id}><Button variant='outlined' color='error'><Edit />Edit</Button></Link>
         </Box>
-        const subject_status = <Checkbox checked={Boolean(d.subject_status)} />
+        const subject_status = <Switch onChange={()=> navigate('/Admin/subjects/' + d._id)} color="success" checked={Boolean(d.subject_status)} />
         return { ...d, action, subject_status, teacher, branch, semister }
-    })
+    }) 
 
     return (
         <Paper sx={{ px: 4, m: 2 }}>

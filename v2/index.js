@@ -14,6 +14,12 @@ const studentApiRouter = require('./student/index')
 const Subject = require('../models/Subject')
 const { Types } = require('mongoose')
 const bcrypt = require("bcrypt")
+const EmailModule = require('../email_module')
+const emailRouter = require('./emails')
+
+let login_url = process.env.DOMAIN
+
+login_url+= "/Studentlogin"
 
 const v2Router = express.Router()
 
@@ -30,6 +36,8 @@ v2Router.post("/reset-password", async (req, res) => {
         if (!data) {
             throw Error("user not found")
         }
+        const emailModule = new EmailModule({ to: data.email , subject: "Your password has been reseted" })
+       await emailModule.password_changed({ login_url })
         return res.json(data)
     } catch (error) {
         return res.status(500).json({ message: error.message })
@@ -142,6 +150,7 @@ v2Router.use(studentRouter)
 v2Router.use(attendanceRouter)
 v2Router.use(subjectRouter)
 v2Router.use(noticeRouter)
+v2Router.use(emailRouter)
 
 // Teacher Routes
 v2Router.use('/teacher-api', teacherRouter)

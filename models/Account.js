@@ -19,6 +19,7 @@ const teacherSchema = new mongoose.Schema({
         type: String,
         enum: ["student", "admin", "teacher"]
     },
+    status: Boolean,
     usn: {
         type: String,
         unique: true

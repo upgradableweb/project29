@@ -69,7 +69,7 @@ export const TeacherData = ({ teacher = _id }) => {
             <StyledPaper>
                 <img src={Tests} alt="Tests" />
                 <Title>
-                    Today Tasks
+                    Today Lesson(s)
                 </Title>
                 <Data start={0} end={today} duration={4} />
             </StyledPaper>

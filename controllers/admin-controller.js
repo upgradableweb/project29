@@ -127,7 +127,6 @@ const deleteAdmin = async (req, res) => {
 
 const updateAdmin = async (req, res) => {
     try {
-
         let result = await Admin.findByIdAndUpdate(req.params.id, req.body, { new: true })
         res.send(result)
     } catch (error) {

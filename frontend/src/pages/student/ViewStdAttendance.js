@@ -24,6 +24,7 @@ const columns = [
 export function StudentAttendance({ user }) {
 
     const [stats, setStats] = useState([])
+    const [loading, setLoading] = useState(true)
     const getData = page => Attendance.getMany({ body: { user, ...page } })
     const { data, setData, isEmpty, ...pagination } = usePaginate(getData)
 
@@ -33,6 +34,8 @@ export function StudentAttendance({ user }) {
             setStats(res)
         } catch (error) {
             Toast.error(error.message)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -62,15 +65,17 @@ export function StudentAttendance({ user }) {
                 <Typography variant='h5'>Attendance Statistics</Typography>
                 <br />
                 <Stack direction={"row"} flexWrap={"wrap"} gap={4}>
-                    {stats.map(({ present, absent, subject }) => {
-                        return <Paper elevation={3} sx={{ p: 4 }}>
-                            <Typography variant='h6' color={"primary"}>{subject?.subject_name}</Typography>
-                            <br />
-                            <Typography>Subject Code : {subject?.subject_code}</Typography>
-                            <Typography variant='h6' color={"green"}>Present : {present}</Typography>
-                            <Typography variant='h6' color={"error"}>Absent : {absent}</Typography>
-                        </Paper>
-                    })}
+                    {stats.length ?
+                        stats.map(({ present, absent, subject }) => {
+                            return <Paper elevation={3} sx={{ p: 4 }}>
+                                <Typography variant='h6' color={"primary"}>{subject?.subject_name}</Typography>
+                                <br />
+                                <Typography>Subject Code : {subject?.subject_code}</Typography>
+                                <Typography variant='h6' color={"green"}>Present : {present}</Typography>
+                                <Typography variant='h6' color={"error"}>Absent : {absent}</Typography>
+                            </Paper>
+                        })
+                        : <Typography>{loading ? "Loading..." : "No Data Found"}</Typography>}
                 </Stack>
             </Paper>
             <Paper sx={{ p: 4, m: 2 }}>

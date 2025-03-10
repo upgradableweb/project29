@@ -23,6 +23,10 @@ const Results = {
     getById: ({ id }) => results.get({ params: { id } })
 }
 
-const Student = { Subject, Attendance, Results, getProfile }
+
+const reset = new FetchIt("/v2/student-api/forgot-password")
+const forgotPass = ({ body })=>  reset.post({ body })
+
+const Student = { Subject, Attendance, Results, getProfile , forgotPass }
 
 export default Student

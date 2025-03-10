@@ -8,9 +8,17 @@ a {
   color: inherit;
 }
 
+
 ::-webkit-scrollbar {
-  display: none;
+  width: 10px;
+  height: 10px;
 }
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #f81c0c #9ca09c67;
+}
+
 
 :root {
   --color-bg: #1f1f38;

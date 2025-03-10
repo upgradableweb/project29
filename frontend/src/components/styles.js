@@ -20,8 +20,8 @@ export const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 export const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-        backgroundColor: theme.palette.action.hover,
+    '&': {
+        border: "1px solid gray",
     },
     // hide last border
     '&:last-child td, &:last-child th': {

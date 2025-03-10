@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, TextField, Grid, Box, Typography, CircularProgress, Stack, Paper, FormControlLabel, Checkbox } from "@mui/material";
+import { Button, TextField, Grid, Box, Typography, CircularProgress, Stack, Paper, FormControlLabel, Checkbox, Switch } from "@mui/material";
 import Input from "../../../components/Input";
 import useForm from "../../../components/useForm";
 import { Branch, Subject, Teacher } from "../../../v2/api";
@@ -92,14 +92,18 @@ const SubjectForm = () => {
         return Teacher.getMany({ branch })
     }
 
-    const onSubmit = async () => {
+    const onSubmit = async (isNew) => {
         if (isError()) {
             setTouchId(2)
             return
         }
         try {
             const res = await Subject.putById({ id, payload: data })
-            navigate(-1)
+            if (isNew) {
+                window.location.replace("/Admin/subjects/new")
+            } else {
+                navigate(-1)
+            }
         } catch (error) {
             Toast.error(error.message)
         }
@@ -141,14 +145,17 @@ const SubjectForm = () => {
                             label={subject_status ? "Active" : "In Active"}
                             {...inputProps({ name: "subject_status" })}
                             checked={Boolean(subject_status)}
-                            control={<Checkbox />}
+                            control={<Switch color="success" />}
                         />
                     </Stack>
                     <br />
                     <br />
                     <Stack flexDirection={'row'} justifyContent={"space-between"}>
                         <Button variant="outlined" onClick={() => navigate(-1)}>BACk</Button>
-                        <Button variant="contained" onClick={onSubmit}>SUBMIT</Button>
+                        <Stack direction={"row"} gap={4}>
+                            <Button variant="contained" onClick={() => onSubmit("new")}>Save & Add New</Button>
+                            <Button variant="contained" onClick={() => onSubmit()}>SUBMIT</Button>
+                        </Stack>
                     </Stack>
                 </Paper>
             </Box>

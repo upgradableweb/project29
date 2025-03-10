@@ -43,6 +43,7 @@ import AddTeacher from './teacherRelated/AddTeacher';
 import StudentComplaints from './studentRelated/StudentComplaints';
 import ComplaintsRealted from './complainsRelated';
 import ViewTeacher from './teacherRelated/ViewTeacher';
+import EmailsRealted from './emailRelated';
 
 const AdminDashboard = () => {
     const [open, setOpen] = useState(true);
@@ -123,6 +124,7 @@ const AdminDashboard = () => {
                         <Route path="/Admin/teacher/all" element={<ShowTeachers />} />
                         <Route path="/Admin/teacher/:id/view" element={<ViewTeacher />} />
                         <Route path="/Admin/teacher/:id" element={<AddTeacher />} />
+                        <Route path="/Admin/emails" element={<EmailsRealted />} />
 
                         <Route path="/logout" element={<Logout />} />
                         <Route path="*" element={<Navigate to={'/'} />} />
