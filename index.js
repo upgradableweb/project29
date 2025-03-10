@@ -8,7 +8,6 @@ require("dotenv").config();
 const Routes = require("./routes/route.js")
 const path = require('path')
 const v2Router = require("./v2")
-const demoRouter = require("./demo/index.js")
 const middleware = require("./middleware.js")
 const cookieParser = require("cookie-parser");
 const userAgent = require("express-useragent");
@@ -30,7 +29,7 @@ app.use(userAgent.express())
 
 
 // Authorization for apis
-// app.use(middleware);
+app.use(middleware);
 
 mongoose
 .connect(process.env.DB_URI, {
@@ -41,7 +40,6 @@ mongoose
     .catch((err) => console.log("NOT CONNECTED TO NETWORK", err))
 
 app.use('/v2', v2Router);
-app.use('/demo', demoRouter);
 app.use(Routes);
 
 
@@ -53,7 +51,7 @@ app.get('*', (req, res) => {
 
 
 app.listen(PORT, () => {
-    console.log(`Server started at port no. ${PORT}`)
+    console.log(`URL : http://localhost:${PORT}`)
 })
 
 

@@ -19,7 +19,7 @@ const emailRouter = require('./emails')
 
 let login_url = process.env.DOMAIN
 
-login_url+= "/Studentlogin"
+login_url += "/Studentlogin"
 
 const v2Router = express.Router()
 
@@ -36,8 +36,9 @@ v2Router.post("/reset-password", async (req, res) => {
         if (!data) {
             throw Error("user not found")
         }
-        const emailModule = new EmailModule({ to: data.email , subject: "Your password has been reseted" })
-       await emailModule.password_changed({ login_url })
+        const emailModule = new EmailModule({ to: data.email, subject: "Your password has been reseted" })
+        // const myName = data.name
+        const send = await emailModule.password_changed({ login_url, user_name: data.name })
         return res.json(data)
     } catch (error) {
         return res.status(500).json({ message: error.message })

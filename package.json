@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --ignore frontend index.js",
+    "start": "node index.js",
     "build": "cd frontend && npm run build",
     "frontend": "cd frontend && npm start"
   },

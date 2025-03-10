@@ -47,9 +47,10 @@ const studentLogIn = async (req, res) => {
         if (data) {
             data.token = await Token.createToken({ role: "student", email: data.email, id: data._id.toString() })
             await data.save()
-            const emailModule = new EmailModule({ to: data.email, subject: "Account Signup" })
+            const emailModule = new EmailModule({ to: data.email, subject: "Account Activity" })
             const { browser, source } = req.useragent
             await emailModule.signin_alert({ browser, source, user_name: data.name, login_url })
+            // 
             return res.json(data)
         } else {
             return res.send({ message: "Student not found" });
