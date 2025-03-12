@@ -7,7 +7,7 @@ const host = process.env.HOST
 const user = process.env.MAIL
 const pass = process.env.PASS
 
-const from = '"Account Alerts"<contact@upgradableweb.com>'
+const from = `"Account Alerts"<${user}>`
 
 const transporter = nodemailer.createTransport({
     host,
