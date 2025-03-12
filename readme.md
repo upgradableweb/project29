@@ -9,4 +9,4 @@ Server Setup
 Frontend Setup
 
 1. "npm install" inside frontend folder where you find package.json [frontend/package.json]
-2. "npm run dev" for starting development server 
+2. "npm run start" for starting development server 
